@@ -932,7 +932,7 @@
           같은 GitHub Pages 내부라면 "another.html" 같은 상대경로 사용 가능.
       */
       randomEvent: {
-        chance: 0.05,
+        chance: 0.00,
         image: "event.png",
         imageAlt: "이벤트 이미지",
         title: "[CRITICAL SECURITY EXCEPTION]",
@@ -1038,7 +1038,28 @@
       if (backButton) {
         backButton.href = CHARACTER.backLink || "index.html";
         backButton.textContent = CHARACTER.backText || "← 뒤로가기";
+
+        /*
+          메인 페이지가 "아누비스에서 방금 돌아왔다"는 사실을 알 수 있도록
+          짧은 수명의 세션 마커를 남깁니다.
+        */
+        backButton.addEventListener("click", () => {
+          try {
+            sessionStorage.setItem("logicAestic.anubisReturn", String(Date.now()));
+          } catch (error) {
+            console.warn("AN-UB1S return marker unavailable", error);
+          }
+        });
       }
+
+      /* 브라우저 자체 뒤로가기로 메인에 복귀하는 경우도 지원 */
+      window.addEventListener("pagehide", () => {
+        try {
+          sessionStorage.setItem("logicAestic.anubisReturn", String(Date.now()));
+        } catch (error) {
+          console.warn("AN-UB1S return marker unavailable", error);
+        }
+      });
 
       /* 기본 텍스트 */
       document.title = `${CHARACTER.name || "Character"} | Codex`;
